@@ -1,0 +1,520 @@
+﻿@page
+@model Invoice_Generator.Pages.Invoices.CreateModel
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create an invoice easily with our invoice generator tool.">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" >
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" > </script >
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+            .input-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .input-group input {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+            .row .input-group {
+                flex: 1;
+            }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+            table th:first-child,
+            table td:first-child {
+                width: 60%;
+            }
+
+        table th {
+            background-color: #001f3f;
+            color: #fff;
+        }
+
+            table th:nth-child(2),
+            table th:nth-child(3),
+            table th:nth-child(4),
+            table td:nth-child(2),
+            table td:nth-child(3),
+            table td:nth-child(4) {
+                width: 13%;
+            }
+
+        table input[type="text"], table input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .totals {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+            .totals div {
+                text-align: right;
+                margin-left: 20px;
+            }
+
+                .totals div span {
+                    display: block;
+                }
+
+        .currency select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input {
+            border: 1px solid #C2C1A5;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+            input:focus {
+                border-color: #6A5ACD;
+                box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);
+                outline: none;
+            }
+    </style>
+</head>
+<body>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["SuccessMessage"]',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            });
+        </script>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '@TempData["ErrorMessage"]',
+                    showConfirmButton: true
+                });
+            });
+        </script>
+    }
+
+    <div class="main-container">
+        <div class="invoice-container">
+            <div>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="invoice-header">
+                        <div class="logo">
+                            <div class="form-group text-center">
+                                <label asp-for="Input.Logo" class="w-100">Company logo</label>
+                                <img id="companyLogo" class="logo-img" alt="Company Logo" style="display: none;" />
+                            </div>
+
+                            <div class="upload-container">
+                                <input type="file"
+                                       accept="image/*"
+                                       asp-for="Input.Logo"
+                                       class="custom-file-input"
+                                       onchange="previewImage(event)" />
+                                <label class="custom-file-label" asp-for="Input.Logo">Choose your logo</label>
+                                <span asp-validation-for="Input.Logo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 asp-for="Input.InvoiceNumber" class="form-label">INVOICE</h1>
+                            <input asp-for="Input.InvoiceNumber" style="width: 100%" placeholder="# 1" />
+                            <span asp-validation-for="Input.InvoiceNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-Right">
+                            <!--
+                                <div class="input-group-Right-textarea">
+                                <textarea asp-for="Input.ClientName" style="width: 70%;" placeholder="Who is this form"></textarea>
+                            </div>
+                            -->
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%;">
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Who is this form</label>
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Who is this form</label>
+                            </div>
+                            <div style="width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 1rem;">
+                                <textarea asp-for="Input.ClientName" style="width: 50%;" placeholder="Client Name"></textarea>
+                                <span asp-validation-for="Input.ClientName" class="text-danger"></span>
+                                <textarea asp-for="Input.ClientEmail" style="width: 50%;" placeholder="Client Email"></textarea>
+                                <span asp-validation-for="Input.ClientEmail" class="text-danger"></span>
+                            </div>
+       
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%;">
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Who is this to</label>
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Who is this to</label>
+                            </div>
+                            <div style="width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 1rem;">
+                                <textarea asp-for="Input.CompanyName" style="width: 50%;" placeholder="Company Name"></textarea>
+                                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                                <textarea asp-for="Input.CompanyAddress" style="width: 50%;" placeholder="Company Address"></textarea>
+                                <span asp-validation-for="Input.CompanyAddress" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="input-group-left">
+                            <div class="input-group-left-div">
+                                <label for="Input.Date" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end;">Date</label>
+                                <input asp-for="Input.Date" type="date" style="width: 50%; margin-left:5px;" />
+                                <span asp-validation-for="Input.Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.PaymentTerms" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end;">Payment Terms</label>
+                                <input asp-for="Input.PaymentTerms" style=" width: 50%; margin-left:5px;" />
+                                <span asp-validation-for="Input.PaymentTerms" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.DueDate" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end;">Due Date</label>
+                                <input asp-for="Input.DueDate" type="date" style="width: 50%; margin-left:5px;" />
+                                <span asp-validation-for="Input.DueDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.PONumber" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end;">PO Number</label>
+                                <input asp-for="Input.PONumber" style="width: 50%; margin-left:5px;" />
+                                <span asp-validation-for="Input.PONumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.Currency" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end;">Currency</label>
+                                <select asp-for="Input.Currency" asp-items="@(new SelectList(Model.CurrencyLookup, "Value", "Text"))" class="form-control" style="width:50%; margin-left:5px;" onchange="updateCurrencySymbol()">
+                                    <option value="">-- Select Currency --</option>
+                                </select>
+                                <span asp-validation-for="Input.Currency" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>            
+                    <div style="width:100%;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Items</th>
+                                    <th style="text-align:center;">Quantity</th>
+                                    <th style="text-align:center;">Rate</th>
+                                    <th style="text-align:center;">Amount</th>
+                                    <th style="text-align:center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items">
+                                <tr>
+                                    <td><input type="text" asp-for="Input.InvoiceItems[0].Description" placeholder="Description of item/service..."></td>
+                                    <td>
+                                        <input type="number" asp-for="Input.InvoiceItems[0].Quantity" value="1" oninput="updateAmount(this)">
+                                    </td>
+                                    <td>
+                                        <input type="number" asp-for="Input.InvoiceItems[0].Rate" value="0" oninput="updateAmount(this)">
+                                    </td>
+                                    <td>
+                                        <input type="number" value="0" readonly>
+                                    </td>
+                                    <td>
+                                        <button class="delete-button" onclick="deleteRow(this)">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="add-line-item" onclick="addItem(event)">+ Line Item</button>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-Right">
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%;">
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Notes</label>
+                            </div>
+                            <div style="width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 1rem;">
+                                <textarea asp-for="Input.Notes" style="width: 80%;" placeholder="Note - any relevant information not already covered"></textarea>
+                            </div>
+                        </div>
+                        <div class="input-group-Right">
+                            <div style="display: flex; justify-content: flex-start; align-items: center; width: 100%;">
+                                <label style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold;">Terms</label>
+                            </div>
+                            <div style="width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 1rem;">
+                                <textarea asp-for="Input.Terms" style="width: 80%;" placeholder="Terms and conditions - late free, payment methods, delivery schedual"></textarea>
+                            </div>
+                        </div>
+                        <div class="input-group-left">
+                            <div class="input-group-left-div">
+                                <label for="Input.SubTotal" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Subtotal</label>
+                                    <input asp-for="Input.SubTotal" style="width: 40%" id="subtotal" type="number" readonly value="0" />
+                                    <span id="subtotal-currency"  style="font-size: 16px; font-weight: bold; color: #333;"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.Discount" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Discount</label>
+                                <input asp-for="Input.Discount" style="width: 40%" id="discount" type="number" value="0" />
+                                <span style="font-size: 16px; font-weight: bold; color: #333;">%</span>
+                                <span asp-validation-for="Input.Discount" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.TaxAmount" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Tax</label>
+                                <input asp-for="Input.TaxAmount" style=" width: 40%" id="tax" type="number" value="0" />
+                                <span style="font-size: 16px; font-weight: bold; color: #333;">%</span>
+                                <span asp-validation-for="Input.TaxAmount" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.Shipping" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Shipping</label>
+                                    <input asp-for="Input.Shipping" style="width: 40%" id="shipping" type="number" value="0" />
+                                <span id="Shipping-currency" style="font-size: 16px; font-weight: bold; color: #333;"></span>
+                                <span asp-validation-for="Input.Shipping" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.AmountPaid" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Amount Paid</label>
+                                <input asp-for="Input.AmountPaid" style="width: 40%" id="amountPaid" type="number" value="0" />
+                                <span id="Amount-currency" style="font-size: 16px; font-weight: bold; color: #333;"></span>
+                                <span asp-validation-for="Input.AmountPaid" class="text-danger"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.Total" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Total</label>
+                                    <input asp-for="Input.Total" style=" width: 40%" id="total" type="number" readonly value="0.0" />
+                                <span id="total-currency" style="font-size: 16px; font-weight: bold; color: #333;"></span>
+                            </div>
+
+                            <div class="input-group-left-div">
+                                <label for="Input.BalanceDue" style="width: 50%; border: none; background-color: transparent; color: #333; font-size: 16px; font-weight: bold; text-align:end">Balance Due</label>
+                                    <input asp-for="Input.BalanceDue" style="width: 40%" id="balanceDue" type="number" readonly value="0.0" />
+                                <span id="balanceDue-currency" style="font-size: 16px; font-weight: bold; color: #333;"></span>
+                            </div>
+                        </div>
+                    <button type="submit" asp-page-handler="Save" class="download-btn" style="width: 100%; margin-top: 5px;">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-container" style="width: 20%; display: flex; flex-direction: column; justify-content: flex-start; align-items: canter;">
+        @if (TempData["LastInvoiceId"] != null)
+        {
+            <form method="post" asp-page-handler="Download" class="Download-form">
+                <input type="hidden" name="id" value="@TempData["LastInvoiceId"]" />
+                <button type="submit" class="download-btn" style="width: 100%; margin-top: 5px;">Download Invoice</button>
+            </form>
+            <form method="post" asp-page-handler="Duplicate" class="Duplicate-form">
+                <input type="hidden" name="id" value="@TempData["LastInvoiceId"]" />
+                <button type="submit" class="Duplicate-btn" style="width: 100%; margin-top: 5px;">Duplicate Invoice</button>
+            </form>
+            <button type="button" class="Send-btn" style="width: 100%; margin-top: 5px;" data-bs-toggle="modal" data-bs-target="#emailModal">
+                Send by email
+            </button>
+        }
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="emailModal" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg rounded-3">
+                <div class="modal-header text-white" style="background: linear-gradient(to right, #4a67b3, #293b8b);">
+                    <h5 class="modal-title fw-bold" id="emailModalLabel">Send Invoice by Email</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" asp-page-handler="SendEmail">
+                        <input type="hidden" name="invoiceId" value="@TempData["LastInvoiceId"]" />
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control border-primary shadow-sm" id="email" name="email" required placeholder="Enter recipient email">
+                        </div>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary shadow-sm" style="background: linear-gradient(to right, #4a67b3, #293b8b); border: none;">
+                                <i class="fas fa-paper-plane me-1"></i> Send
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        @section Scripts {
+                <partial name="_ValidationScriptsPartial" />
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let alertBox = document.querySelector(".alert");
+            if (alertBox) {
+                setTimeout(() => {
+                    alertBox.classList.add("fade");
+                    alertBox.style.opacity = "0";
+                    setTimeout(() => alertBox.remove(), 500);
+                }, 10000000); 
+            }
+        });
+
+        function updateCurrencySymbol() {
+            var selectedCurrency = document.querySelector('[name="Input.Currency"]').value;
+
+            if (selectedCurrency) {
+                document.getElementById("subtotal-currency").innerText = selectedCurrency;
+                document.getElementById("total-currency").innerText = selectedCurrency;
+                document.getElementById("balanceDue-currency").innerText = selectedCurrency;
+                document.getElementById("Shipping-currency").innerText = selectedCurrency;
+                document.getElementById("Amount-currency").innerText = selectedCurrency;
+            } else {
+                document.getElementById("subtotal-currency").innerText = '';
+                document.getElementById("total-currency").innerText = '';
+                document.getElementById("balanceDue-currency").innerText = '';
+                document.getElementById("Shipping-currency").innerText = '';
+                document.getElementById("Amount-currency").innerText = '';
+            }
+
+            document.querySelector('[name="Input.Currency"]').value = selectedCurrency;
+        }
+
+
+        function calculateValues() {
+            const subtotal = parseFloat(document.getElementById('subtotal').value) || 0;
+            const discount = parseFloat(document.getElementById('discount').value) || 0;
+            const tax = parseFloat(document.getElementById('tax').value) || 0;
+            const shipping = parseFloat(document.getElementById('shipping').value) || 0;
+            const amountPaid = parseFloat(document.getElementById('amountPaid').value) || 0;
+
+            const discountAmount = subtotal * (discount / 100);
+            const afterDiscount = subtotal - discountAmount;
+
+            const taxAmount = afterDiscount * (tax / 100);
+
+            const total = afterDiscount + taxAmount + shipping;
+
+            const balanceDue = total - amountPaid;
+
+            document.getElementById('total').value = total.toFixed(2);
+            document.getElementById('balanceDue').value = balanceDue.toFixed(2);
+        }
+
+        document.querySelectorAll('#subtotal, #discount, #tax, #shipping, #amountPaid').forEach(input => {
+            input.addEventListener('input', calculateValues);
+        });
+
+        calculateValues();
+
+        function deleteRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+
+        function addItem(event) {
+            event.preventDefault();  
+            const itemsTable = document.getElementById('items');
+            const rowIndex = itemsTable.rows.length; 
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" name="Input.InvoiceItems[${rowIndex}].Description" placeholder="Description of item/service..."></td>
+                <td><input type="number" name="Input.InvoiceItems[${rowIndex}].Quantity" value="1" oninput="updateAmount(this)"></td>
+                <td><input type="number" name="Input.InvoiceItems[${rowIndex}].Rate" value="0" oninput="updateAmount(this)"></td>
+                <td><input type="number" name="Input.InvoiceItems[${rowIndex}].Total" value="0" readonly></td>
+                <td><button class="delete-button" onclick="deleteRow(this)">Delete</button></td>
+            `;
+            itemsTable.appendChild(row);
+        }
+
+        function updateAmount(input) {
+            const row = input.parentElement.parentElement;
+            const quantity = parseFloat(row.querySelector('td:nth-child(2) input').value) || 0;
+            const rate = parseFloat(row.querySelector('td:nth-child(3) input').value) || 0;
+            const amount = row.querySelector('td:nth-child(4) input');
+
+            amount.value = (quantity * rate).toFixed(2);
+            updateSubtotal();
+
+        }
+
+        function updateSubtotal() {
+            let subtotal = 0;
+            const amounts = document.querySelectorAll('tr td:nth-child(4) input');
+
+            amounts.forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            calculateValues();
+        }
+
+        function toggleCurrencySelect() {
+            var selectContainer = document.getElementById("currency-select-container");
+            if (selectContainer.style.display === "none" || selectContainer.style.display === "") {
+                selectContainer.style.display = "block";
+            } else {
+                selectContainer.style.display = "none";
+            }
+        }
+
+        function previewImage(event) {
+            const input = event.target;
+            const imgElement = document.getElementById('companyLogo');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imgElement.src = e.target.result;
+                    imgElement.style.display = 'block'; 
+                };
+
+                reader.readAsDataURL(input.files[0]); 
+            }
+        }
+    
+    </script>
+</body>
+</html>

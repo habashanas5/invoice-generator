@@ -1,0 +1,110 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var currentPageFolderName = ViewData["PageFolderName"]?.ToString() ?? string.Empty;
+    }
+    <aside class="main-sidebar sidebar-light-primary elevation-4">
+    <!-- Brand Logo -->
+    <a asp-area="" asp-page="/Admin/Dashboards/DefaultDashboard" class="brand-link">
+        <img src="~/payment_tax_invoice_calculator_icon_188745.png" alt="Invoice generator" style="height: 30%; width:30%; display:block;margin-left:auto;margin-right:auto;">
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                @{
+                    var user = await UserManager.GetUserAsync(User);
+                    if (user?.ProfilePicture != null)
+                    {
+                        <img src="data:image/*;base64,@(Convert.ToBase64String(user.ProfilePicture))"
+                             class="img-circle elevation-2 user-image-small" alt="User Image">
+                    }
+                    else
+                    {
+                        <img src="~/images/avatar-male.jpg" class="img-circle elevation-2 user-image-small" alt="User Image">
+                    }
+                }
+            </div>
+            <div class="info">
+                <a asp-area="" asp-page="/Admin/Dashboards/DefaultDashboard" class="d-block ">@User.Identity?.Name!</a>
+            </div>
+        </div>
+
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false"> 
+                <li class="nav-item @(ViewData["Module"]?.ToString() == "Dashboards" ? "menu-open" : "")">
+                    <a href="#" class="nav-link @(ViewData["Module"]?.ToString() == "Dashboards" ? "active" : "")">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboards
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="~/Admin/Dashboards/DefaultDashboard" class="nav-link @(currentPageFolderName.Equals("roles") ? "active" : "")">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Dashboards</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item @(ViewData["Module"]?.ToString() == "Roles" ? "menu-open" : "")">
+                    <a href="#" class="nav-link @(ViewData["Module"]?.ToString() == "Roles" ? "active" : "")">
+                        <i class="nav-icon fas fa-cubes"></i>
+                        <p>
+                            Roles
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/admin/roles" class="nav-link @(currentPageFolderName.Equals("roles") ? "active" : "")">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Add/View Roles</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/usersRoles" class="nav-link @(currentPageFolderName.Equals("usersRoles") ? "active" : "")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>User Role</p>
+                            </a>
+                        </li> 
+                    </ul>
+                </li>
+
+                <li class="nav-item @(ViewData["Module"]?.ToString() == "Invoices" ? "menu-open" : "")">
+                    <a href="#" class="nav-link @(ViewData["Module"]?.ToString() == "Invoices" ? "active" : "")">
+                        <i class="nav-icon fas fa-file-invoice"></i>
+                        <p>
+                            Invoices
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="/Invoices/Create" class="nav-link @(currentPageFolderName.Equals("Create") ? "active" : "")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Create Invoice</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Invoices/InvoicesList" class="nav-link @(currentPageFolderName.Equals("InvoicesList") ? "active" : "")">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Invoices List</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

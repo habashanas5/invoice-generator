@@ -1,0 +1,286 @@
+﻿@page
+@model Invoice_Generator.Pages.Invoices.InvoiceHistoryModel
+@{
+    ViewData["Title"] = "Invoice History";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                showConfirmButton: false,
+                timer: 2000 
+            });
+        });
+    </script>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                showConfirmButton: true
+            });
+        });
+    </script>
+}
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        table th {
+            background-color: #001f3f;
+            color: #000;
+        }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); 
+    animation: fadeIn 0.3s ease-out; 
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 8px;
+    width: 35%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-out;
+}
+
+.modal-content h2 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 16px;
+    color: #000;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+input[type="email"]:focus {
+    border-color: #007BFF; 
+    outline: none;
+}
+
+button.btn.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #4a67b3, #293b8b);
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.btn.btn-primary:hover {
+    background-color: #0056b3; 
+}
+
+.close {
+    color: #aaa;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #000; 
+}
+
+@@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+        .icon-btn {
+            border: none;
+            background: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+            .icon-btn i {
+                font-size: 18px; 
+                color: black;
+                filter: grayscale(100%); 
+                transition: color 0.3s ease;
+            }
+
+            .icon-btn:hover i {
+                color: gray; 
+            }
+
+    </style>
+
+</head>
+
+<h1 style="text-align:center;">Invoice History</h1>
+<hr />
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Invoice History</h3>
+                </div>
+                <div class="card-body">
+                    <table id="invoicesTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Invoice Number</th>
+                                <th style="text-align:center;">Date</th>
+                                <th style="text-align:center;">Due Date</th>
+                                <th style="text-align:center;">Client</th>
+                                <th style="text-align:center;">Company</th>
+                                <th style="text-align:center;">Total</th>
+                                <th style="text-align:center;">Balance Due</th>
+                                <th style="text-align:center;">Paid</th>
+                                <th style="text-align:center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Invoices != null && Model.Invoices.Any())
+                            {
+                                @foreach (var invoice in Model.Invoices)
+                                {
+                                    <tr class="@(invoice.IsPaid ? "table-success" : "table-danger")">
+                                        <td>@invoice.InvoiceNumber</td>
+                                        <td style="text-align:center;">@invoice.Date.ToShortDateString()</td>
+                                        <td style="text-align:center;">@invoice.DueDate.ToShortDateString()</td>
+                                        <td style="text-align:center;">@invoice.Client.Name</td>
+                                        <td style="text-align:center;">@invoice.Company.Name</td>
+                                        <td style="text-align:center;">@invoice.Currency @invoice.Total.ToString("N2")</td>
+                                        <td style="text-align:center;">@invoice.Currency @invoice.BalanceDue.ToString("N2")</td>
+                                        <td style="text-align:center;">
+                                            <input type="checkbox" @(invoice.IsPaid ? "checked" : "") disabled />
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <a asp-page="/Invoices/InvoiceHistoryDetails" asp-route-id="@invoice.Id"
+                                                   data-bs-toggle="tooltip" title="View Details" class="icon-btn">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+
+                                                <a asp-page="/Invoices/InvoiceHistoryEdit" asp-route-id="@invoice.Id"
+                                                   data-bs-toggle="tooltip" title="Edit Invoice" class="icon-btn">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+
+                                                <button type="button" class="icon-btn"
+                                                        onclick="openEmailPopup(@invoice.Id)"
+                                                        data-bs-toggle="tooltip" title="Send this invoice via email">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+
+                                                <form method="post" asp-page-handler="Duplicate" asp-route-id="@invoice.Id">
+                                                    <button type="submit" class="icon-btn"
+                                                            data-bs-toggle="tooltip" title="Duplicate Invoice">
+                                                        <i class="fas fa-clone"></i>
+                                                    </button>
+                                                </form>
+
+                                                <form method="post" asp-page-handler="Download" asp-route-id="@invoice.Id">
+                                                    <button type="submit" class="icon-btn"
+                                                            data-bs-toggle="tooltip" title="Download Invoice">
+                                                        <i class="fas fa-download"></i>
+                                                    </button>
+                                                </form>
+
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@invoice.Id">
+                                                    <button type="submit" class="icon-btn"
+                                                            onclick="return confirm('Are you sure you want to delete this invoice?');"
+                                                            data-bs-toggle="tooltip" title="Delete Invoice">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="9" style="text-align:center;">No invoices found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="emailPopup" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEmailPopup()">&times;</span>
+                        <h2>Send Invoice via Email</h2>
+                        <form id="emailForm" method="post" asp-page-handler="SendEmail">
+                            <input type="hidden" id="invoiceId" name="invoiceId" />
+                            <label for="email">Email Address:</label>
+                            <input type="email" id="email" name="email" required />
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(to right, #4a67b3, #293b8b);">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEmailPopup(invoiceId) {
+        document.getElementById('invoiceId').value = invoiceId;
+        document.getElementById('emailPopup').style.display = 'block';
+    }
+
+    function closeEmailPopup() {
+        document.getElementById('emailPopup').style.display = 'none';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

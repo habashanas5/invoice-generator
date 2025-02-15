@@ -1,0 +1,377 @@
+﻿@page
+@model Invoice_Generator.Pages.Invoices.InvoiceHistoryEditModel
+@{
+    ViewData["Title"] = "Edit Invoice";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        });
+    </script>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["ErrorMessage"]',
+                showConfirmButton: true
+            });
+        });
+    </script>
+}
+
+<head>
+    <style>
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        table th {
+            background-color: #001f3f;
+            color: #000;
+        }
+
+            table th:first-child,
+            table td:first-child {
+                width: 60%;
+            }
+
+            table th:nth-child(2),
+            table th:nth-child(3),
+            table th:nth-child(4),
+            table td:nth-child(2),
+            table td:nth-child(3),
+            table td:nth-child(4) {
+                width: 13%;
+            }
+
+        table input[type="text"], table input[type="number"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<h1 class="text-center my-4">Edit Invoice</h1>
+
+<div class="container">
+    <div class="card shadow-lg p-4">
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Invoice Details</h5>
+
+                    <!-- Invoice Number -->
+                    <div class="mb-3">
+                        <label asp-for="Input.InvoiceNumber" class="form-label"></label>
+                        <input asp-for="Input.InvoiceNumber" class="form-control" required />
+                        <span asp-validation-for="Input.InvoiceNumber" class="text-danger"></span>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Date" class="form-label"></label>
+                        <input asp-for="Input.Date" class="form-control" type="date" required />
+                        <span asp-validation-for="Input.Date" class="text-danger"></span>
+                    </div>
+
+                    <!-- Due Date -->
+                    <div class="mb-3">
+                        <label asp-for="Input.DueDate" class="form-label"></label>
+                        <input asp-for="Input.DueDate" class="form-control" type="date" required />
+                        <span asp-validation-for="Input.DueDate" class="text-danger"></span>
+                    </div>
+
+                    <!-- PO Number -->
+                    <div class="mb-3">
+                        <label asp-for="Input.PONumber" class="form-label"></label>
+                        <input asp-for="Input.PONumber" class="form-control" />
+                        <span asp-validation-for="Input.PONumber" class="text-danger"></span>
+                    </div>
+
+                    <!-- Payment Terms -->
+                    <div class="mb-3">
+                        <label asp-for="Input.PaymentTerms" class="form-label"></label>
+                        <input asp-for="Input.PaymentTerms" class="form-control" required />
+                        <span asp-validation-for="Input.PaymentTerms" class="text-danger"></span>
+                    </div>
+
+                    <!-- Company Name -->
+                    <div class="mb-3">
+                        <label asp-for="Input.CompanyName" class="form-label"></label>
+                        <input asp-for="Input.CompanyName" class="form-control" required />
+                        <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Company Address -->
+                    <div class="mb-3">
+                        <label asp-for="Input.CompanyAddress" class="form-label"></label>
+                        <input asp-for="Input.CompanyAddress" class="form-control" required />
+                        <span asp-validation-for="Input.CompanyAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Company Logo</label>
+                        <div class="text-center">
+                            @if (Model.Input.ExistingCompanyLogo != null)
+                            {
+                                <img id="CompanyLogo" alt="Logo" class="img-fluid rounded shadow-sm"
+                                     style="max-width:300px;max-height:250px;"
+                                     src="data:image/*;base64,@(Convert.ToBase64String(Model.Input.ExistingCompanyLogo))" />
+                            }
+                            else
+                            {
+                                <img id="CompanyLogo" alt="Logo" class="img-fluid rounded shadow-sm"
+                                     style="max-width:300px;max-height:250px;" src="~/images/avatar-male.jpg" />
+                            }
+                        </div>
+                        <div class="mt-2">
+                            <input type="file" accept="image/*" asp-for="Input.CompanyLogoFile" class="form-control"
+                                   onchange="document.getElementById('CompanyLogo').src = window.URL.createObjectURL(this.files[0])" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Client & Financial Details</h5>
+
+                    <!-- Client Name -->
+                    <div class="mb-3">
+                        <label asp-for="Input.ClientName" class="form-label"></label>
+                        <input asp-for="Input.ClientName" class="form-control" required />
+                        <span asp-validation-for="Input.ClientName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Client Email -->
+                    <div class="mb-3">
+                        <label asp-for="Input.ClientEmail" class="form-label"></label>
+                        <input asp-for="Input.ClientEmail" class="form-control" required />
+                        <span asp-validation-for="Input.ClientEmail" class="text-danger"></span>
+                    </div>
+                   
+                    <!-- SubTotal -->
+                    <div class="mb-3">
+                        <label asp-for="Input.SubTotal" class="form-label"></label>
+                        <input id="SubTotal" asp-for="Input.SubTotal" class="form-control" type="number" step="0.01" readonly />
+                        <span asp-validation-for="Input.SubTotal" class="text-danger"></span>
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Discount" class="form-label"></label>
+                        <input id="Discount" asp-for="Input.Discount" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Input.Discount" class="text-danger"></span>
+                    </div>
+
+                    <!-- Tax Amount -->
+                    <div class="mb-3">
+                        <label asp-for="Input.TaxAmount" class="form-label"></label>
+                        <input id="TaxAmount" asp-for="Input.TaxAmount" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Input.TaxAmount" class="text-danger"></span>
+                    </div>
+
+                    <!-- Shipping -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Shipping" class="form-label"></label>
+                        <input id="Shipping" asp-for="Input.Shipping" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Input.Shipping" class="text-danger"></span>
+                    </div>
+
+                    <!-- Amount Paid -->
+                    <div class="mb-3">
+                        <label asp-for="Input.AmountPaid" class="form-label"></label>
+                        <input id="AmountPaid" asp-for="Input.AmountPaid" class="form-control" type="number" step="0.01" />
+                        <span asp-validation-for="Input.AmountPaid" class="text-danger"></span>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Total" class="form-label"></label>
+                        <input id="Total" asp-for="Input.Total" class="form-control" type="number" step="0.01" readonly />
+                        <span asp-validation-for="Input.Total" class="text-danger"></span>
+                    </div>
+
+                    <!-- Balance Due -->
+                    <div class="mb-3">
+                        <label asp-for="Input.BalanceDue" class="form-label"></label>
+                        <input id="BalanceDue" asp-for="Input.BalanceDue" class="form-control" type="number" step="0.01" readonly />
+                        <span asp-validation-for="Input.BalanceDue" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Is paid</label>
+                        <input type="checkbox" asp-for="Input.IsPaid" class="form-check-input" />
+                    </div>
+
+                    <!-- Currency -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Currency" class="form-label"></label>
+                        <select asp-for="Input.Currency" asp-items="@(new SelectList(Model.CurrencyLookup, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Currency --</option>
+                        </select>
+                        <span asp-validation-for="Input.Currency" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h5 class="mb-3">Invoice Items</h5>
+                    <table class="table" id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center">Description</th>
+                                <th style="text-align:center">Quantity</th>
+                                <th style="text-align:center">Rate</th>
+                                <th style="text-align:center">Total</th>
+                                <th style="text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Input.Items.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input asp-for="Input.Items[i].Description" class="form-control" />
+                                        <span asp-validation-for="Input.Items[i].Description" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                        <input asp-for="Input.Items[i].Quantity" class="form-control" />
+                                        <span asp-validation-for="Input.Items[i].Quantity" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                        <input asp-for="Input.Items[i].Rate" class="form-control" />
+                                        <span asp-validation-for="Input.Items[i].Rate" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                        <input asp-for="Input.Items[i].Total" class="form-control" readonly />
+                                    </td>
+                                    <td>
+                                        <button class="delete-button" onclick="removeItem(@i)">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <button type="button" class="add-line-item" onclick="addItem()">Add Item</button>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label asp-for="Input.Notes" class="form-label"></label>
+                <textarea asp-for="Input.Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Input.Notes" class="text-danger"></span>
+            </div>
+
+            <!-- Terms -->
+            <div class="mb-3">
+                <label asp-for="Input.Terms" class="form-label"></label>
+                <textarea asp-for="Input.Terms" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Input.Terms" class="text-danger"></span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-between">
+                <a asp-page="/Invoices/InvoiceHistory" class="btn btn-secondary">Back to List</a>
+                <button type="submit" class="btn btn-primary" style="background: linear-gradient(to right, #4a67b3, #293b8b);">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function addItem() {
+            var index = document.getElementById("itemsTable").rows.length - 1;
+            var html = `
+                        <tr>
+                            <td>
+                                <input name="Input.Items[${index}].Description" class="form-control" />
+                            </td>
+                            <td>
+                                <input name="Input.Items[${index}].Quantity" class="form-control" oninput="calculateInvoice()" />
+                            </td>
+                            <td>
+                                <input name="Input.Items[${index}].Rate" class="form-control" oninput="calculateInvoice()" />
+                            </td>
+                            <td>
+                                <input name="Input.Items[${index}].Total" class="form-control" readonly />
+                            </td>
+                            <td>
+                               <button type="button" class="delete-button" onclick="removeItem(${index})">Delete</button>
+                            </td>
+                        </tr>`;
+            var row = document.getElementById("itemsTable").insertRow(-1);
+            row.innerHTML = html;
+            calculateInvoice(); 
+        }
+
+        function removeItem(index) {
+            document.getElementById("itemsTable").deleteRow(index + 1);
+            calculateInvoice(); 
+        }
+
+        function calculateInvoice() {
+            let total = 0;
+            let subTotal = 0;
+            let amountPaid = parseFloat(document.querySelector('[name="Input.AmountPaid"]').value) || 0;
+
+            // Loop through all invoice items and calculate the total
+            const rows = document.querySelectorAll('#itemsTable tbody tr');
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('[name^="Input.Items"][name$=".Quantity"]').value) || 0;
+                const rate = parseFloat(row.querySelector('[name^="Input.Items"][name$=".Rate"]').value) || 0;
+                const itemTotal = quantity * rate;
+                row.querySelector('[name^="Input.Items"][name$=".Total"]').value = itemTotal.toFixed(2);
+                subTotal += itemTotal;  // Update SubTotal based on items
+            });
+
+            // Get other fields for discount, shipping, tax, etc.
+            const discount = parseFloat(document.querySelector('[name="Input.Discount"]').value) || 0;
+            const taxAmount = parseFloat(document.querySelector('[name="Input.TaxAmount"]').value) || 0;
+            const shipping = parseFloat(document.querySelector('[name="Input.Shipping"]').value) || 0;
+
+            // Calculate Total after applying discount, tax, and shipping
+            total = subTotal - discount + taxAmount + shipping;
+
+            // Set SubTotal, Total, and BalanceDue
+            document.querySelector('[name="Input.SubTotal"]').value = subTotal.toFixed(2);  // Update SubTotal
+            document.querySelector('[name="Input.Total"]').value = total.toFixed(2);
+            document.querySelector('[name="Input.BalanceDue"]').value = (total - amountPaid).toFixed(2);
+        }
+
+        // Call the function whenever an item is changed
+        document.querySelector('#itemsTable').addEventListener('input', calculateInvoice);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("Discount").addEventListener("input", calculateInvoice);
+            document.getElementById("TaxAmount").addEventListener("input", calculateInvoice);
+            document.getElementById("Shipping").addEventListener("input", calculateInvoice);
+            document.getElementById("AmountPaid").addEventListener("input", calculateInvoice);
+        });
+
+    </script>
+}

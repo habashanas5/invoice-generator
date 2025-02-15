@@ -1,0 +1,136 @@
+﻿@page
+@model Invoice_Generator.Pages.Admin.UsersRoles.IndexModel
+@{
+    ViewData["Title"] = "Users Roles";
+    Layout = "~/Pages/Shared/AdminLTE/_Admin.cshtml";
+}
+
+<head>
+    <style>
+        table th {
+            background-color: #001f3f;
+            color: #fff;
+        }
+
+        /* Icon button styles */
+        .icon-btn {
+            border: none;
+            background: none;
+            padding: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+            .icon-btn i {
+                font-size: 18px;
+                color: black;
+                filter: grayscale(100%);
+                transition: color 0.3s ease;
+            }
+
+            .icon-btn:hover i {
+                color: gray;
+            }
+
+        /* Align buttons horizontally */
+        .action-buttons {
+            display: flex;
+            gap: 10px; /* Adds space between buttons */
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<h1 style="text-align:center;">Users Roles</h1>
+<hr />
+
+<!-- Users Roles Table -->
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Users Roles</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="usersRolesTable" class="table table-bordered table-striped" style="text-align:center;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;">First Name</th>
+                                    <th style="text-align:center;">Last Name</th>
+                                    <th style="text-align:center;">User Name</th>
+                                    <th style="text-align:center;">Email</th>
+                                    <th style="text-align:center;">Roles</th>
+                                    <th style="text-align:center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.Users)
+                                {
+                                    <tr>
+                                        <td>@user.FirstName</td>
+                                        <td>@user.LastName</td>
+                                        <td>@user.UserName</td>
+                                        <td>@user.Email</td>
+                                        <td>@string.Join(", ", user.Roles)</td>
+                                        <td>
+                                            <!-- Action buttons in a flex container -->
+                                            <div class="action-buttons">
+                                                <!-- Manage Roles Button with Icon -->
+                                                <a class="icon-btn" asp-page="./ManageRoles" asp-route-userId="@user.Id" data-bs-toggle="tooltip" title="Manage Roles">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+
+                                                <!-- Delete Button with Icon -->
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@user.Id" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="icon-btn" data-bs-toggle="tooltip" title="Delete User">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+@section Scripts {
+    <!-- Validation Scripts Partial (if needed) -->
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- jQuery and DataTables Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css" />
+
+    <!-- Initialize DataTables -->
+    <script>
+        $(document).ready(function () {
+            $('#usersRolesTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "language": {
+                    "search": "Search:",
+                    "lengthMenu": "Display _MENU_ users per page",
+                    "zeroRecords": "No matching users found",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ users",
+                    "infoEmpty": "No users available",
+                    "infoFiltered": "(filtered from _MAX_ total users)"
+                }
+            });
+        });
+    </script>
+}

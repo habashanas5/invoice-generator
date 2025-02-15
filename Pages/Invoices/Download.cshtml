@@ -1,0 +1,17 @@
+﻿@page
+@model Invoice_Generator.Pages.Invoices.DownloadModel
+@{
+    ViewData["Title"] = "Download Invoice";
+}
+
+@if (Model.Invoice != null)
+{
+    <form method="post" asp-page-handler="Download" class="Download-form">
+        <input type="hidden" name="id" value="@Model.Invoice.Id" />
+        <button type="submit" class="download-btn" style="width: 100%; margin-top: 5px;">Download Invoice</button>
+    </form>
+}
+else
+{
+    <p>Invoice not found.</p>
+}

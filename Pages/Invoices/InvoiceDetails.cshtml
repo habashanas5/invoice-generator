@@ -1,0 +1,251 @@
+﻿@page
+@model Invoice_Generator.Pages.Invoices.InvoiceDetailsModel
+@{
+    Layout = "~/Pages/Shared/AdminLTE/_Admin.cshtml";
+    ViewData["Title"] = "Invoice Details";
+}
+
+<head>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #001f3f;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 15px;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+            border-radius: 0 0 10px 10px;
+            padding: 15px;
+            text-align: right;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            table th, table td {
+                padding: 12px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+
+            table th {
+                background-color: #001f3f;
+                color: #fff;
+                font-weight: bold;
+            }
+
+            table tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            table tr:hover {
+                background-color: #f1f1f1;
+            }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+            .badge.bg-success {
+                background-color: #28a745;
+            }
+
+            .badge.bg-danger {
+                background-color: #dc3545;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+        .company-logo {
+            max-width: 200px;
+            display: block;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .row {
+            margin-bottom: 15px;
+        }
+
+            .row dt {
+                font-weight: bold;
+                color: #001f3f;
+            }
+
+            .row dd {
+                margin-left: 0;
+                color: #555;
+            }
+
+        h5 {
+            color: #001f3f;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Invoice Details</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Company</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Company.Name</dd>
+
+                        <dt class="col-sm-3">Company Address</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Company.Address</dd>
+
+                        <dt class="col-sm-3">Company Logo</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(Model.CompanyLogoBase64))
+                            {
+                                <img src="@Model.CompanyLogoBase64" alt="Company Logo" class="img-fluid" style="max-width: 150px; border: 1px solid #ccc; padding: 5px;" />
+                            }
+                            else
+                            {
+                                <span>No logo available</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Invoice Number</dt>
+                        <dd class="col-sm-9">@Model.Invoice.InvoiceNumber</dd>
+
+                        <dt class="col-sm-3">Date</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Date.ToShortDateString()</dd>
+
+                        <dt class="col-sm-3">Client</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Client.Name</dd>
+
+                        <dt class="col-sm-3">Payment Terms</dt>
+                        <dd class="col-sm-9">@Model.Invoice.PaymentTerms</dd>
+
+                        <dt class="col-sm-3">Due Date</dt>
+                        <dd class="col-sm-9">@Model.Invoice.DueDate.ToShortDateString()</dd>
+
+                        <dt class="col-sm-3">PO Number</dt>
+                        <dd class="col-sm-9">@Model.Invoice.PONumber</dd>
+
+                        <dt class="col-sm-3">Notes</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Notes</dd>
+
+                        <dt class="col-sm-3">Terms</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Terms</dd>
+
+                        <dt class="col-sm-3">Subtotal</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.SubTotal.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Discount</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.Discount.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Shipping</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.Shipping.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Tax Amount</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.TaxAmount.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Total</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.Total.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Amount Paid</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.AmountPaid.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Balance Due</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency @Model.Invoice.BalanceDue.ToString("N2")</dd>
+
+                        <dt class="col-sm-3">Currency</dt>
+                        <dd class="col-sm-9">@Model.Invoice.Currency</dd>
+
+                        <dt class="col-sm-3">Payment Status</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Invoice.IsPaid)
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Unpaid</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    <h5 class="mt-4">Invoice Items</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th style="text-align:center">Quantity</th>
+                                <th style="text-align:center">Rate</th>
+                                <th style="text-align:center">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Invoice.InvoiceItems)
+                            {
+                                <tr>
+                                    <td>@item.Description</td>
+                                    <td style="text-align:center">@item.Quantity</td>
+                                    <td style="text-align:center"> @Model.Invoice.Currency @item.Rate.ToString("N2")</td>
+                                    <td style="text-align:center">@Model.Invoice.Currency @item.Total.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a asp-page="/Invoices/InvoicesList" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

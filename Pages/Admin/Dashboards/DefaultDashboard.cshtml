@@ -1,0 +1,191 @@
+﻿@page
+@model Invoice_Generator.Pages.Admin.Dashboards.DefaultDashboardModel
+@{
+    Layout = "~/Pages/Shared/AdminLTE/_Admin.cshtml";
+    ViewData["Title"] = "Dashboard";
+}
+
+<input type="hidden" id="currencyData" value='@Json.Serialize(Model.CurrencyCounts)' />
+<section class="content">
+    <div class="form-card">
+        <div class="container-fluid pt-4 px-4">
+            <div class="row g-4">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-file-invoice-dollar fa-3x" style="color: #007bff;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Total Invoices</p>
+                            <h6 class="mb-0 text-end">@Model.TotalInvoices</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-users fa-3x" style="color: #007bff;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">New Users This Month</p>
+                            <h6 class="mb-0 text-end">@Model.NewUsersThisMonth</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-check-circle fa-3x" style="color: #007bff;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Paid Invoices</p>
+                            <h6 class="mb-0 text-end">@Model.PaidInvoices</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-exclamation-triangle fa-3x" style="color: #007bff;;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Unpaid Invoices</p>
+                            <h6 class="mb-0 text-end">@Model.UnpaidInvoices</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid pt-4 px-4">
+            <div class="row g-4">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-calendar-alt fa-3x" style="color: #007bff;;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Upcoming Due</p>
+                            <h6 class="mb-0 text-end">@Model.UpcomingDueInvoices</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-users fa-3x" style="color: #007bff;;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Total Clients</p>
+                            <h6 class="mb-0 text-end">@Model.TotalClients</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-building fa-3x" style="color: #007bff;;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Total Companies</p>
+                            <h6 class="mb-0 text-end">@Model.TotalCompanies</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-white rounded d-flex align-items-center justify-content-between p-4">
+                        <i class="fas fa-users fa-3x" style="color: #007bff;;"></i>
+                        <div class="ms-3">
+                            <p class="mb-2">Total Users</p>
+                            <h6 class="mb-0 text-end">@Model.TotalUser</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid pt-4 px-4">
+            <div class="row g-4 mb-4">
+                <div class="col-sm-12 col-xl-12">
+                    <div class="bg-light text-center rounded p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <h6 class="mb-0">Invoices</h6>
+                        </div>
+
+                        <!-- Latest Invoices -->
+                        <div class="col-sm-12">
+                            <div class="bg-white rounded p-4 shadow-sm">
+                                <h5 class="mb-3">Latest Invoices</h5>
+
+                                @if (Model.LatestInvoices != null && Model.LatestInvoices.Any())
+                                {
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Invoice #</th>
+                                                <th>Date</th>
+                                                <th>Client</th>
+                                                <th>Company</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var invoice in Model.LatestInvoices)
+                                            {
+                                                <tr>
+                                                    <td>@invoice.InvoiceNumber</td>
+                                                    <td>@invoice.Date.ToString("yyyy-MM-dd")</td>
+                                                    <td>@(invoice.Client?.Name ?? "No Client")</td>
+                                                    <td>@(invoice.Company?.Name ?? "No Company")</td>
+                                                    <td>@($"{invoice.Total:C} {invoice.Currency}")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning">
+                                        No invoices found.
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid pt-4 px-4">
+            <div class="row g-4">
+                <div class="col-sm-12 col-xl-12">
+                    <div class="bg-light text-center rounded p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <h6 class="mb-0">Currency Usage</h6>
+                        </div>
+                        <canvas id="currencyChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Get currency data from the hidden field
+    const currencyData = JSON.parse(document.getElementById('currencyData').value);
+
+    // Extract labels and data for the chart
+    const labels = Object.keys(currencyData);
+    const data = Object.values(currencyData);
+
+    // Create the chart
+    const ctx = document.getElementById('currencyChart').getContext('2d');
+    const currencyChart = new Chart(ctx, {
+        type: 'bar', 
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Invoices',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
